@@ -1,6 +1,30 @@
 document.addEventListener('DOMContentLoaded', (event) => {
     let quill = new Quill('#editor-container', {
-        theme: 'snow'
+        theme: 'snow',
+        modules: {
+            toolbar: '#toolbar'
+        }
+    });
+
+    document.getElementById('save-button').addEventListener('click', () => {
+        const content = quill.root.innerHTML;
+        saveContent(content);
+    });
+
+    document.getElementById('open-button').addEventListener('click', () => {
+        htmx.ajax('GET', '/list-notes', {
+            target: '#editor-container',
+            swap: 'innerHTML',
+            onBeforeSwap: (detail) => {
+                // Assuming the response is a list of notes with titles and IDs
+                quill.root.innerHTML = detail.xhr.responseText;
+                return false;
+            }
+        });
+    });
+
+    document.getElementById('new-button').addEventListener('click', () => {
+        quill.root.innerHTML = '';
     });
 
     // Load content from the server on page load

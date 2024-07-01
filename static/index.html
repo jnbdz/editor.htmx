@@ -13,14 +13,23 @@
             width: 100%;
         }
         #editor-container {
-            height: 100%;
+            height: calc(100% - 42px); /* Adjust height to fit the toolbar */
+            border: 1px solid #ccc; /* Adding a border for visibility */
+        }
+        .ql-toolbar .ql-formats button {
+            margin: 5px;
         }
     </style>
 </head>
 <body>
-<div id="editor-container"></div>
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
-<script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js"></script>
-<script src="main.js"></script>
+    <div id="toolbar">
+        <button id="save-button">Save</button>
+        <button id="open-button">Open</button>
+        <button id="new-button">New</button>
+    </div>
+    <div id="editor-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.0/dist/htmx.min.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
