@@ -32,6 +32,7 @@ func main() {
 	http.HandleFunc("/save", saveHandler)
 	http.HandleFunc("/load", loadHandler)
 	http.HandleFunc("/list-notes", listNotesHandler)
+	http.HandleFunc("/load-note", loadNoteHandler) // Register the loadNoteHandler
 
 	fmt.Println("Server started at http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -93,12 +94,17 @@ func listNotesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error listing notes", http.StatusInternalServerError)
 		return
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+			return
+		}
+	}(rows)
 
-	notes := []struct {
+	var notes []struct {
 		ID    int
 		Title string
-	}{}
+	}
 	for rows.Next() {
 		var id int
 		var title string
