@@ -17,13 +17,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
             swap: 'innerHTML',
             onBeforeSwap: (detail) => {
                 // Assuming the response is a list of notes with titles and IDs
-                quill.root.innerHTML = detail.xhr.responseText;
-                return false;
+                /*quill.root.innerHTML = detail.xhr.responseText;
+                return false;*/
+                quill.disable(); // Disable Quill editor while showing the list
+                return true; // Allow HTMX to swap content
             }
         });
     });
 
     document.getElementById('new-button').addEventListener('click', () => {
+        quill.enable(); // Enable Quill editor
         quill.root.innerHTML = '';
     });
 
@@ -57,6 +60,14 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const go = new Go();
     WebAssembly.instantiateStreaming(fetch('main.wasm'), go.importObject).then((result) => {
         go.run(result.instance);
+    });
+
+    // Handle loading a specific note
+    htmx.on('htmx:afterSwap', (event) => {
+        if (event.detail.target.id === 'editor-container' && event.detail.xhr.responseURL.includes('/load-note')) {
+            quill.enable(); // Re-enable Quill editor when loading a note
+            quill.root.innerHTML = event.detail.target.innerHTML;
+        }
     });
 });
 
